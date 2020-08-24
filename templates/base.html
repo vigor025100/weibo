@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>演示页面</title>
+    <style>
+        body {
+            width: 1000px;
+            margin: auto;
+            padding: 0px;
+        }
+        .nav {
+            background-color: cornflowerblue;
+            height: 100px;
+        }
+        .container {
+            background-color: gold;
+            width: 1000px;
+            height: 600px;
+        }
+        .content {
+            background-color: lightpink;
+            width: 800px;
+            height: 590px;
+            float: left;
+            align-items: center;
+        }
+        .sidebar {
+            background-color: lawngreen;
+            width: 200px;
+            height: 590px;
+            float: left;
+        }
+        .footbar {
+            background-color: gray;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav"></div>
+<!--    容器-->
+    <div class="container">
+       <!--        内容区-->
+        <div class="content">
+           {% block content %} 当前没有内容{% endblock %}
+        </div>
+<!--边栏-->
+        <div class="sidebar">
+            {% block sidebar %} {% endblock %}
+        </div>
+    </div>
+    <div class="footbar"></div>
+</body>
+</html>
