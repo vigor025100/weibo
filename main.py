@@ -2,7 +2,9 @@
 from flask import Flask
 from flask_script import Manager
 from flask_migrate import Migrate,MigrateCommand
+# 自己定义的模块
 from libs.orm import db
+from user.views import user_bp # 使 main 和 user 里面的 view 产生联系
 
 # 定义 app 对象
 app = Flask(__name__)
@@ -16,6 +18,8 @@ manger = Manager(app)
 # 初始化 db 迁移工具
 migrate = Migrate(app,db)
 manger.add_command('db',MigrateCommand)
+
+app.register_blueprint(user_bp)  # 这样一注册一下，user里面的views和main发生了关系，实锤了
 
 
 if __name__ == '__main__':

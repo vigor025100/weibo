@@ -3,4 +3,27 @@
 
 <!--填充内容-->
 {% block content %}
+<h2>新用户注册</h2>
+<hr>
+<form action="/user/register" method="POST">
+    <lable>username</lable>
+    <input type="text" name="username">
+    <br>
+    <lable>password</lable>
+    <input type="password" name="password">
+    <br>
+    <lable>gender</lable>
+    <input type="text" name="gender">
+    <br>
+    <lable>city</lable>
+    <input type="text" name="city">
+    <br>
+    <lable>address</lable>
+    <input type="text" name="address">
+    <br>
+    <lable>phone</lable>
+    <input type="text" name="phone">
+    <br>
+    <input type="submit" value="提交">
+</form>
 {% endblock %}

@@ -12,7 +12,18 @@ usre_bp.template_folder='./templates'  # 当前蓝图模板文件存放的位置
 @user_bp.route('/register',methods=('POST','GET'))
 def register():
     if request.method == 'POST':
-        pass
+        username = request.form.get('username')
+        password = request.form.get('password')
+        gender = request.form.get('gender')
+        city = request.form.get('city')
+        address = request.form.get('address')
+        phone = request.form.get('phone')
+
+        user = User(username=username,password=password,gender=gender,city=city,address=address,phone=phone)
+        db.session.add(user) # 往表内插入数据
+        db.session.commit() # 提交数据
+
+        return redirect('/user/login')  # 注册好了就要到登录页面呀
 
     else:
         return render_template('register.html')
