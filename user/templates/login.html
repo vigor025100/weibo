@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!--绑定父类模板-->
+{% extends "base.html" %}
 
-</body>
-</html>
+<!--填充内容-->
+{% block content %}
+<h2>用户登录</h2>
+<hr/>
+<form action="/user/login" method="POST">
+    <lable>账号：</lable><input type="text" name="username" placeholder="姓名">
+    <br>
+    <lable>密码：</lable><input type="password" name="password" placeholder="密码">
+    <br>
+    <input type="submit" value="登录"><button><a href="/user/register">注册</a></button>
+</form>
+{% endblock %}
