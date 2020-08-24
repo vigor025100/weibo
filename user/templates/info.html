@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!--绑定父类模板-->
+{% extends "base.html" %}
 
-</body>
-</html>
+<!--填充内容-->
+{% block content %}
+<h2>{{ user.username }}个人信息</h2>
+<hr>
+<ul>
+    <li>姓名：{{ user.username }}</li>
+    <li>性别：{{ user.gender }}</li>
+    <li>城市：{{ user.city }}</li>
+    <li>地址：{{ user.address }}</li>
+    <li>电话：{{ user.phone }}</li>
+    <li><a href="/user/logout">退出登录</a></li>
+</ul>
+{% endblock %}
