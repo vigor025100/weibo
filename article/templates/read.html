@@ -1,0 +1,16 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>动态速递</h2>
+<hr>
+<ul>
+    <li><h3>{{ article.title }}</h3></li>
+    <li>{{ article.content }}</li>
+    <li>{{ article.author }}</li>
+    <li>{{ article.date }}</li>
+</ul>
+<a href="/article/modif?id={{ article.id }}">修改本条微博</a>
+<a href="/article/delete?id={{ article.id }}">删除本条微博</a>
+{% endblock %}

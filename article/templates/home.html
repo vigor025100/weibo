@@ -1,0 +1,14 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>动态速递</h2>
+<hr>
+<ul>
+    {% for art in articles %}
+        <li><h3><a href="/article/read?id={{ art.id }}"></a>{{ art.title }}</h3></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

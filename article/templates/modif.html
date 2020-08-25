@@ -1,0 +1,17 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>编辑微博内容</h2>、
+<hr>
+<form action="/article/modif" method="POST">
+    <lable>标题</lable><input type="text" name="title" value="{{ article.title }}">
+    <br>
+    <lable>内容</lable><textarea name="content"  cols="30" rows="10">{{ article.content }}</textarea>
+    <br>
+    <lable>作者</lable><input type="text" name="author" value="{{ article.author }}">
+    <br>
+    <input type="submit" value="提交修改">
+</form>
+{% endblock %}
