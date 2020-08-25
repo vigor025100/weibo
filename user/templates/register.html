@@ -5,15 +5,26 @@
 {% block content %}
 <h2>新用户注册</h2>
 <hr>
+{% if err %}
+<h3 style="color: red">{{ err }}</h3>
+{% endif %}
 <form action="/user/register" method="POST">
     <lable>姓名：</lable>
     <input type="text" name="username">
     <br>
     <lable>密码：</lable>
-    <input type="password" name="password">
+    <input type="password" name="password1">
+    <br>
+    <lable>密码确认：</lable>
+    <input type="password" name="password2">
     <br>
     <lable>性别：</lable>
-    <input type="text" name="gender">
+    男<input type="radio" name="gender" value="男">
+    女<input type="radio" name="gender" value="女">
+    保密<input type="radio" name="gender" value="保密" checked>
+    <br>
+    <lable>生日：</lable>
+    <input type="date" name="birthday" min="1990-01-01" max="2020-01-01">
     <br>
     <lable>城市</lable>
     <input type="text" name="city">

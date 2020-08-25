@@ -42,6 +42,7 @@ def read():
 @article_bp.route('/modif',methods=('POST','GET'))
 def modif(): # 修改微博
     if request.method == 'POST':
+        id = request.form.get('id')
         title = request.form.get('title')
         content = request.form.get('content')
         author = request.form.get('author')
@@ -49,12 +50,13 @@ def modif(): # 修改微博
 
         article = Article(title=title, content=content, date=date, author=author)
         db.session.add(article)
+        Article.query.filter_by(id=id).delete()   # 删除原本的微博
         db.session.commit()
         return redirect('/article/home')
 
     else:
         id = request.args.get('id')
-        article = Article.query.filter_by(id=id).oen()
+        article = Article.query.filter_by(id=id).one()
         return render_template('modif.html',article=article)
 
 @article_bp.route('/delete')

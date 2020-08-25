@@ -4,10 +4,13 @@
 <!--填充内容-->
 {% block content %}
 <h2>{{ user.username }}个人信息</h2>
+<li><a href="/article/push">发微博</a></li>
+<li><a href="/article/home">查看微博动态</a></li>
 <hr>
 <ul>
     <li>姓名：{{ user.username }}</li>
     <li>性别：{{ user.gender }}</li>
+    <li>性别：{{ user.birthday }}</li>
     <li>城市：{{ user.city }}</li>
     <li>地址：{{ user.address }}</li>
     <li>电话：{{ user.phone }}</li>

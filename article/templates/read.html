@@ -6,11 +6,12 @@
 <h2>动态速递</h2>
 <hr>
 <ul>
-    <li><h3>{{ article.title }}</h3></li>
-    <li>{{ article.content }}</li>
-    <li>{{ article.author }}</li>
-    <li>{{ article.date }}</li>
+    <li><h3>标题：{{ article.title }}</h3></li>
+    <li>内容：{{ article.content }}</li>
+    <li>作者：{{ article.author }}</li>
+    <li>发布时间：{{ article.date }}</li>
 </ul>
+<a href="/article/push">发微博</a>
 <a href="/article/modif?id={{ article.id }}">修改本条微博</a>
 <a href="/article/delete?id={{ article.id }}">删除本条微博</a>
 {% endblock %}

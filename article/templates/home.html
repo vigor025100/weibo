@@ -7,8 +7,9 @@
 <hr>
 <ul>
     {% for art in articles %}
-        <li><h3><a href="/article/read?id={{ art.id }}"></a>{{ art.title }}</h3></li>
+        <li><h3><a href="/article/read?id={{ art.id }}">{{ art.title }}</a></h3></li>
     {% endfor %}
 </ul>
+<a href="/article/push">快来发布一条微博吧</a>
 {% endblock %}
 

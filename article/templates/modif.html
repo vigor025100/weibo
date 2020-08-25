@@ -3,7 +3,7 @@
 
 <!--填充内容-->
 {% block content %}
-<h2>编辑微博内容</h2>、
+<h2>编辑微博内容</h2>
 <hr>
 <form action="/article/modif" method="POST">
     <lable>标题</lable><input type="text" name="title" value="{{ article.title }}">
@@ -13,5 +13,6 @@
     <lable>作者</lable><input type="text" name="author" value="{{ article.author }}">
     <br>
     <input type="submit" value="提交修改">
+    <input type="hidden" name="id" value="{{ article.id }}">
 </form>
 {% endblock %}
