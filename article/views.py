@@ -14,8 +14,14 @@ article_bp.template_folder='./templates'
 
 @article_bp.route('/home')
 def home(): # 微博主页
+    # articles = Article.query.all().order_by('date')
+    # return render_template('home.html',articles=articles)
     articles = Article.query.all()
-    return render_template('home.html',articles=articles)
+    arts = []
+    for art in articles: # 遍历是按顺序遍历的
+        arts.append(art)
+    arts_new = arts[::-1]  # 列表的切片，使其倒序
+    return render_template('home.html',arts_new=arts_new)
 
 @article_bp.route('/push',methods=('POST','GET'))
 def push(): # 发微博

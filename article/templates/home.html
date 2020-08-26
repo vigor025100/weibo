@@ -6,7 +6,7 @@
 <h2>动态速递</h2>
 <hr>
 <ul>
-    {% for art in articles %}
+    {% for art in arts_new %}
         <li><h3><a href="/article/read?id={{ art.id }}">{{ art.title }}</a></h3></li>
     {% endfor %}
 </ul>
