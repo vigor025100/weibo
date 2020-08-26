@@ -3,7 +3,7 @@ from libs.orm import db
 class Article(db.Model):
     __tablename__ = 'article'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(30),nullable=False)
+    uid = db.Column(db.Integer, nullable=False, index=True)
     content = db.Column(db.Text,nullable=False)
-    author = db.Column(db.String(20),nullable=False)
-    date = db.Column(db.DateTime)
+    created = db.Column(db.DateTime, nullable=False)
+    updated = db.Column(db.DateTime, nullable=False)

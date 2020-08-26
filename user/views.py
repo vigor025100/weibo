@@ -6,11 +6,12 @@ from flask import session
 from libs.orm import db
 from libs.utils import make_password
 from libs.utils import check_password
+from libs.utils import login_required
 from sqlalchemy.exc import IntegrityError
 
 from user.models import User
 
-user_bp = Blueprint('user',__name__,url_prefix='/user') # 定义一个蓝图实例对象
+user_bp = Blueprint('user',__name__,url_prefix='/user') # 定义一个蓝图实例对象，user 为当前蓝图本身的名称
 user_bp.template_folder='./templates'  # 当前蓝图模板文件存放的位置
 
 # 注册
@@ -32,13 +33,14 @@ def register():
             return render_template('register.html',err='两次输入密码不相符')
 
         user = User(username=username,password=make_password(password1),gender=gender,city=city,address=address,phone=phone,birthday=birthday)
+        # username 设置了唯一的属性，当用户名重复的时候，注册信息添加到数据库会报错
         try:
             db.session.add(user) # 用户信息写入数据库
             db.session.commit() # 提交数据
             return redirect('/user/login')
         except IntegrityError:
             db.session.rollback
-            return render_template('/user/register',err='用户名已被占用')
+            return render_template('register.html',err='用户名已被占用')
 
     # 拉起注册页面
     else:
@@ -51,7 +53,7 @@ def login():
     if request.method == 'POST':
         username=request.form.get('username')
         password=request.form.get('password')
-        user = User.query.filter_by(username=username).one()
+
 
         # 判断用户名
         try:
@@ -64,6 +66,7 @@ def login():
         if check_password(password,user.password):
             # 在 Session 中记录用户的登录状态
             session['username']=user.username
+            session['id']=user.id
             return redirect('/user/info')
         else:
             return render_template('ep.html')
@@ -73,6 +76,7 @@ def login():
 
 # 用户信息详情
 @user_bp.route('/info')
+@login_required # 增加了装饰器，判断用户是否登录
 def info():
     username = session.get('username') # response 给浏览器返回的 session['username']
     user = User.query.filter_by(username=username).one()

@@ -1,5 +1,7 @@
 import os
 from hashlib import md5,sha256
+from flask import redirect
+
 
 
 # 创建密码密钥
@@ -27,9 +29,15 @@ def check_password(password,safe_password):
         password = str(password).encode('utf8')
 
     hash_value = sha256(password).hexdigest()
-
     return hash_value == safe_password[32:]
 
 
-
-
+# 判断是否登录状态
+def login_required(vew_func):  # 传的参数是我们需要被装饰的函数，这里我们装饰的是视图函数
+    def check_session(*args,**kwargs): # 我们是通过获取session值来判断用户是否登录
+        username = session['username'] # 因为我在登录的时候通过session 给服务器传的就是username值
+        if not username:
+            return redirect('/user/login') # 如果没有取到session 就重定向到登录页面
+        else:
+            return vew_func() # 取到session值，就正常执行查看个人详细信息的代码
+    return check_session
