@@ -1,4 +1,6 @@
 import datetime
+
+from math import ceil
 from flask import Blueprint
 from flask import redirect
 from flask import request
@@ -7,6 +9,7 @@ from flask import session
 from libs.orm import db
 
 from article.models import Article
+from article.models import Comment
 from libs.utils import login_required
 
 article_bp = Blueprint('article',__name__,url_prefix='/article')
@@ -16,8 +19,23 @@ article_bp.template_folder='./templates'
 @article_bp.route('/home')
 def home():
     '''微博首页'''
-    articles=Article.query.order_by(Article.updated.desc()).all()
-    return render_template('home.html', articles=articles)
+    page = int(request.args.get('page',1))
+    per_page = 6 # 每页数量
+    offset_page = per_page * (page-1) # 跳过前多少页
+
+    max_page = ceil(Article.query.count()/per_page)
+
+    # 需要在底部展示7个页码
+    if page <= 3:
+        start,end = 1,min(7,max_page)
+    elif page > (max_page-3) :
+        start,end =(max_page-6),max_page
+    else:
+        start,end = (page-3),(page+3)
+    pages = range(start,end+1)
+
+    articles=Article.query.order_by(Article.updated.desc()).limit(per_page).offset(offset_page)
+    return render_template('home.html', articles=articles,pages=pages,page=page)
 
 @article_bp.route('/push',methods=('POST','GET'))
 @login_required
@@ -45,7 +63,11 @@ def read():
     '''阅读微博'''
     id = request.args.get('wid')
     article = Article.query.filter_by(id=id).one()
-    return render_template('read.html',article=article) # 我们传过去的是啥，是一个 article 实例
+
+    # 根据 wid 取出相应的评论
+    comments = Comment.query.filter_by(wid=id).order_by(Comment.created.desc())
+
+    return render_template('read.html',article=article, comments=comments)
 
 @article_bp.route('/modif',methods=('POST','GET'))
 @login_required
@@ -81,3 +103,35 @@ def delete(): # 删除微博
         return redirect('/article/home')
     else:
         return render_template('login.html', err='请登录')
+
+
+@article_bp.route('/push_comment', methods=('POST',))
+@login_required
+def push_comment():
+    '''发表评论'''
+    uid = session['id']
+    wid = request.form.get('wid')
+    content = request.form.get('content')
+    now = datetime.datetime.now()
+
+    comment = Comment(uid=uid, wid=wid, content=content, created=now)
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(f'/article/read?wid={wid}')
+
+@article_bp.route('/reply', methods=('POST',))
+@login_required
+def reply():
+    '''回复评论'''
+    uid = session['id']
+    wid = request.form.get('wid')
+    cid = request.form.get('cid') # 这里为啥会有 cid 因为我们是对别人的评论进行了回复，所以才会有啊，那通过这个 cid 是不是也可以找到 这条评论的作者呀
+    content = request.form.get('content')
+    now = datetime.datetime.now()
+
+    comment = Comment(uid=uid, wid=wid, cid=cid, content=content, created=now)
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(f'/article/read?wid={wid}')

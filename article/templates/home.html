@@ -6,8 +6,8 @@
 <h2>最新微博动态</h2>
 <hr>
 {% for art in articles %}
-<div style="color: #b3d7ff">
-    <strong>{{ art.author.username }}说:</strong>
+<div style="background-color: #b3d7ff">
+    <strong>{{ art.author.username }} 说:</strong>
     <br>
     {{ art.content | replace('\n', '<br />') | safe }}
     <br>
@@ -15,6 +15,20 @@
 </div>
 <hr>
 {% endfor %}
+<!--页码-->
+
+<table style="border:1px solid black" rules="all" align="center">
+    <tr>
+        {% for p in pages %}
+        {% if p == page %}
+        <td align="center"><a href="/article/home?page={{ p }}"><font color="red">{{ p }}</font></a></td>
+        {% else %}
+        <td align="center"><a href="/article/home?page={{ p }}">{{ p }}</a></td>
+        {% endif %}}
+        {% endfor %}
+    </tr>
+</table>
+
 {% endblock %}
 
 <!--边栏内容-->
