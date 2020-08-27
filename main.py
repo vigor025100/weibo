@@ -7,6 +7,8 @@ from flask_migrate import Migrate,MigrateCommand
 from libs.orm import db
 from user.views import user_bp # 使 main 和 user 里面的 view 产生联系
 from article.views import article_bp
+from user.models import User
+from article.models import Article
 
 # 定义 app 对象
 app = Flask(__name__)
@@ -27,7 +29,16 @@ app.register_blueprint(article_bp)
 
 @app.route('/')
 def home():
-    return redirect('/user/login')  # 重定向
+    return redirect('/article/home')  # 重定向
+
+# 要增加一个命令，添加微博测试数据
+@manger.command
+def create_test_weibo(): # 直接就可以使用 create_test_weibo 进行操作
+    '''创建微博数据'''
+    users = User.fake_users(50)
+    uid_list = [u.id for u in users]
+    Article.fake_weibos(uid_list,5000)
+
 if __name__ == '__main__':
 
     manger.run()

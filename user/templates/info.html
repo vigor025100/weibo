@@ -4,8 +4,8 @@
 <!--填充内容-->
 {% block content %}
 <h2>{{ user.username }}个人信息</h2>
-<li><a href="/article/push">发微博</a></li>
-<li><a href="/article/home">查看微博动态</a></li>
+<button><a href="/article/push">发微博</a></button>
+<button><a href="/article/home">查看微博动态</a></button>
 <hr>
 <ul>
     <li>姓名：{{ user.username }}</li>
@@ -14,6 +14,6 @@
     <li>城市：{{ user.city }}</li>
     <li>地址：{{ user.address }}</li>
     <li>电话：{{ user.phone }}</li>
-    <li><a href="/user/logout">退出登录</a></li>
+    <button><a href="/user/logout">退出登录</a></button>
 </ul>
 {% endblock %}

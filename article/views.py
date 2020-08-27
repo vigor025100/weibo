@@ -14,22 +14,18 @@ article_bp.template_folder='./templates'
 
 
 @article_bp.route('/home')
-def home(): # 微博主页
-    # articles = Article.query.all().order_by('date')
-    # return render_template('home.html',articles=articles)
-    articles = Article.query.all()
-    arts = []
-    for art in articles: # 遍历是按顺序遍历的
-        arts.append(art)
-    arts_new = arts[::-1]  # 列表的切片，使其倒序
-    return render_template('home.html',arts_new=arts_new)
+def home():
+    '''微博首页'''
+    articles=Article.query.order_by(Article.updated.desc()).all()
+    return render_template('home.html', articles=articles)
 
 @article_bp.route('/push',methods=('POST','GET'))
 @login_required
-def push(): # 发微博
+def push():
+    '''发微博'''
     if request.method == 'POST':
         content = request.form.get('content','').strip()
-        uid = session.get('id')  # 用户发微博的时候必须是登录的状态，所以写的那个登录检查装饰器又排上用场了
+        uid = session.get('id')  # 用户发微博的时候必须是登录的状态，登录就会有用户的id,所以写的那个登录检查装饰器又排上用场了
         now = datetime.datetime.now()
 
         # 检查微博的内容是否为空
@@ -46,33 +42,42 @@ def push(): # 发微博
 
 @article_bp.route('/read')
 def read():
+    '''阅读微博'''
     id = request.args.get('wid')
     article = Article.query.filter_by(id=id).one()
-    return render_template('read.html',article=article)
+    return render_template('read.html',article=article) # 我们传过去的是啥，是一个 article 实例
 
 @article_bp.route('/modif',methods=('POST','GET'))
-def modif(): # 修改微博
+@login_required
+def modif():
+    '''修改微博'''
     if request.method == 'POST':
-        id = request.form.get('id')
-        title = request.form.get('title')
+        wid = request.form.get('wid')
         content = request.form.get('content')
-        author = request.form.get('author')
-        date = datetime.datetime.now()
+        updated = datetime.datetime.now()
 
-        article = Article(title=title, content=content, date=date, author=author)
-        db.session.add(article)
-        Article.query.filter_by(id=id).delete()   # 删除原本的微博
+        # 检查微博内容是否为空
+        if not content :
+            return render_template('modif.html',err='微博内容不允许为空')
+
+        Article.query.filter_by(id=wid).update({'content':content,'updated':updated})
         db.session.commit()
-        return redirect('/article/home')
+        return redirect(f'/article/read?wid={wid}')
 
     else:
-        id = request.args.get('id')
-        article = Article.query.filter_by(id=id).one()
+        wid = request.args.get('wid')
+        article = Article.query.get(wid)
         return render_template('modif.html',article=article)
 
 @article_bp.route('/delete')
+@login_required
 def delete(): # 删除微博
-    id = request.args.get('id')
-    Article.query.filter_by(id=id).delete()  # 直接删除了微博
-    db.session.commit()
-    return redirect('/article/home')
+    wid = request.args.get('wid')
+    article=Article.query.get(wid)
+    id = session.get('id')
+    if article.uid == id :
+        db.session.delete(article)
+        db.session.commit()
+        return redirect('/article/home')
+    else:
+        return render_template('login.html', err='请登录')

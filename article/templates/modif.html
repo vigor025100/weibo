@@ -3,16 +3,16 @@
 
 <!--填充内容-->
 {% block content %}
-<h2>编辑微博内容</h2>
+<h2>修改微博内容</h2>
+<!--处理错误信息-->
+{% if err %}
+<strong>{{ err }}</strong>
+{% endif %}
 <hr>
 <form action="/article/modif" method="POST">
-    <lable>标题</lable><input type="text" name="title" value="{{ article.title }}">
-    <br>
     <lable>内容</lable><textarea name="content"  cols="30" rows="10">{{ article.content }}</textarea>
     <br>
-    <lable>作者</lable><input type="text" name="author" value="{{ article.author }}">
-    <br>
     <input type="submit" value="提交修改">
-    <input type="hidden" name="id" value="{{ article.id }}">
+    <input type="hidden" name="wid" value="{{ article.id }}">
 </form>
 {% endblock %}

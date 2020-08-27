@@ -3,13 +3,27 @@
 
 <!--填充内容-->
 {% block content %}
-<h2>动态速递</h2>
+<h2>最新微博动态</h2>
 <hr>
-<ul>
-    {% for art in arts_new %}
-        <li><h3><a href="/article/read?id={{ art.id }}">{{ art.title }}</a></h3></li>
-    {% endfor %}
-</ul>
-<a href="/article/push">快来发布一条微博吧</a>
+{% for art in articles %}
+<div style="color: #b3d7ff">
+    <strong>{{ art.author.username }}说:</strong>
+    <br>
+    {{ art.content | replace('\n', '<br />') | safe }}
+    <br>
+    <a href="/article/read?wid={{ art.id }}">{{ art.updated }}</a>
+</div>
+<hr>
+{% endfor %}
 {% endblock %}
 
+<!--边栏内容-->
+{% block sidebar %}
+{% if not session.get('id'): %}
+<strong><a href="/user/login">登录</a></strong>
+&nbsp;&nbsp;
+<strong><a href="/user/register">注册</a></strong>
+{% else %}
+<strong><a href="/user/info">个人信息详情</a></strong>
+{% endif %}
+{% endblock %}

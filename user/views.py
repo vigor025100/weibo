@@ -78,8 +78,8 @@ def login():
 @user_bp.route('/info')
 @login_required # 增加了装饰器，判断用户是否登录
 def info():
-    username = session.get('username') # response 给浏览器返回的 session['username']
-    user = User.query.filter_by(username=username).one()
+    id = session.get('id') # response 给浏览器返回的 session['username']
+    user = User.query.filter_by(id=id).one()
     return render_template('info.html',user=user)
 
 # 用户退出登录

@@ -4,12 +4,17 @@
 <!--填充内容-->
 {% block content %}
 <h2>用户登录</h2>
+<!--检查错误-->
+{% if err %}
+<strong>{{ err }}</strong>
+{% endif %}
 <hr/>
 <form action="/user/login" method="POST">
     <lable>账号：</lable><input type="text" name="username" placeholder="姓名">
     <br>
     <lable>密码：</lable><input type="password" name="password" placeholder="密码">
     <br>
-    <input type="submit" value="登录"><button><a href="/user/register">注册</a></button>
+    <input type="submit" value="登录">&nbsp;&nbsp;<button><a href="/user/register">注册</a></button>
+    &nbsp;&nbsp;<button><a href="/article/home">随便看看</a></button>
 </form>
 {% endblock %}

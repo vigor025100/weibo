@@ -3,15 +3,30 @@
 
 <!--填充内容-->
 {% block content %}
-<h2>动态速递</h2>
+<h2>微博详情</h2>
+<h4>{{ article.author.username }}</h4>
 <hr>
-<ul>
-    <li><h3>标题：{{ article.title }}</h3></li>
-    <li>内容：{{ article.content }}</li>
-    <li>作者：{{ article.author }}</li>
-    <li>发布时间：{{ article.date }}</li>
-</ul>
-<a href="/article/push">发微博</a>
-<a href="/article/modif?id={{ article.id }}">修改本条微博</a>
-<a href="/article/delete?id={{ article.id }}">删除本条微博</a>
+<span>{{ article.content | replace('\n', '<br>') | safe }}</span>
+<hr>
+<span>发布时间：{{ article.updated }}</span>
+<br>
+<a href="/article/home">回到微博首页</a>
+<!--当用户不是登录状态，或者在阅读不是登录者的状态是不展示 发微博 修改 删除-->
+{% if article.uid == session.get('id'): %}
+&nbsp;&nbsp;
+<a href="/article/modif?wid={{ article.id }}">修改本条微博</a>
+&nbsp;&nbsp;
+<a href="/article/delete?wid={{ article.id }}">删除本条微博</a>
+{% endif %}
+{% endblock %}
+
+
+<!--边栏内容-->
+
+{% block sidebar %}
+{% if not session.get('id'): %}
+<strong><a href="/user/login">登录</a></strong>
+&nbsp;&nbsp;
+<strong><a href="/user/register">注册</a></strong>
+{% endif %}
 {% endblock %}
