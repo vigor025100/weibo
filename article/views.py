@@ -11,6 +11,7 @@ from libs.orm import db
 from article.models import Article
 from article.models import Comment
 from article.models import Thumb
+from user.models import Follow
 from libs.utils import login_required
 from sqlalchemy.exc import IntegrityError
 
@@ -64,15 +65,16 @@ def push():
 @article_bp.route('/read')
 def read():
     '''阅读微博'''
-    id = request.args.get('wid')
+    id = request.args.get('wid') # 微博的id
+    fid = request.args.get('fid')
     article = Article.query.filter_by(id=id).one()
 
     # 根据 wid 取出相应的评论
     comments = Comment.query.filter_by(wid=id).order_by(Comment.created.desc())
 
-    # 判断当前用户有没有给这条微博点赞
-    uid = session.get('id') # 取当前登录用户的id
-    page = session.get('page') # 得到这条微博在home的第几页
+    uid = session.get('id')  # 取当前登录用户的id
+    page = session.get('page',1)  # 得到这条微博在home的第几页
+    # 判断是否点赞
     if uid : # 如果取到了uid
         if Thumb.query.filter_by(uid=uid, wid=id).count():
             is_liked=True

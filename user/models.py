@@ -41,4 +41,8 @@ class User(db.Model):
         db.session.commit()
         return users
 
-
+class Follow(db.Model):
+    '''关注列表'''
+    __tablename__ = 'follow'
+    uid = db.Column(db.Integer, nullable=False, primary_key=True)
+    fid = db.Column(db.Integer, nullable=False, primary_key=True)

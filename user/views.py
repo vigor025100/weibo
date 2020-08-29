@@ -7,9 +7,11 @@ from libs.orm import db
 from libs.utils import make_password
 from libs.utils import check_password
 from libs.utils import login_required
-from sqlalchemy.exc import IntegrityError
+
+# from pymysql.err import IntegrityError
 
 from user.models import User
+from user.models import Follow
 
 user_bp = Blueprint('user',__name__,url_prefix='/user') # 定义一个蓝图实例对象，user 为当前蓝图本身的名称
 user_bp.template_folder='./templates'  # 当前蓝图模板文件存放的位置
@@ -92,7 +94,40 @@ def logout():
 # 非登录用户信息详情页
 @user_bp.route('/other_info')
 def other_info():
-    uid = int(request.args.get('uid'))
+    fid = int(request.args.get('uid')) # 被查看用户id
     wid = int(request.args.get('wid'))
-    user = User.query.filter_by(id=uid).one()
-    return render_template('other_info.html', user=user,wid=wid)
+    user = User.query.filter_by(id=fid).one()
+    uid = session.get('id')  # 当前登录用户的id
+
+    # 判断是否关注
+    if uid != fid : # 判断是不是当前登录用户点击自己的用户名
+        if uid : # 虽说关注那块会验证登录情况，但是那是在提交请求时才验证，我们这里是未请求时的展示状态
+            if Follow.query.filter_by(uid=uid,fid=fid).count():
+                is_followed = True
+            else:
+                is_followed = False
+        else:
+            is_followed = False
+
+        return render_template('other_info.html', user=user,wid=wid, is_followed=is_followed)
+    else:
+        return redirect('/user/info')
+
+# 关注用户
+@user_bp.route('/follow')
+@login_required
+def follow():
+    uid = session['id']  # 当前登录用户id
+    fid = request.args.get('uid') # 被关注用户id
+    wid = request.args.get('wid')
+
+    follow = Follow(uid=uid, fid=fid)
+
+    if Follow.query.filter_by(uid=uid, fid=fid).count():
+        Follow.query.filter_by(uid=uid, fid=fid).delete()
+        db.session.commit()
+    else:
+        db.session.add(follow)
+        db.session.commit()
+
+    return redirect(f'/user/other_info?wid={wid}&uid={fid}')

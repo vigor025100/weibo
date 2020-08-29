@@ -5,8 +5,13 @@
 {% block content %}
 <h2>{{ user.username }}个人信息:</h2>
 <br>
-<button>粉丝列表</button>
-<button>关注列表</button>
+<a href="/user/follow?uid={{ user.id}}&wid={{ wid }}">
+    {% if is_followed %}
+    <strong>取消关注</strong>
+    {% else %}
+    <strong>关注TA</strong>
+    {% endif %}
+</a>
 <hr>
 <ul>
     <li>姓名：{{ user.username }}</li>
@@ -15,4 +20,10 @@
     <li>城市：{{ user.city }}</li>
 </ul>
 <button><a href="/article/read?wid={{ wid }}">返回</a></button>
+{% endblock %}
+
+<!--边栏-->
+{% block sidebar %}
+<button>粉丝列表</button>
+<button>关注列表</button>
 {% endblock %}

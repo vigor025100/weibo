@@ -17,14 +17,15 @@
 {% endfor %}
 <!--页码-->
 
-<table style="border:1px solid black" rules="all" align="center">
+<table  align="center">
     <tr>
+        <td align="left"><a href="/article/home?page=1">首页</a></td>
         {% for p in pages %}
         {% if p == page %}
         <td align="center"><a href="/article/home?page={{ p }}"><font color="red">{{ p }}</font></a></td>
         {% else %}
         <td align="center"><a href="/article/home?page={{ p }}">{{ p }}</a></td>
-        {% endif %}}
+        {% endif %}
         {% endfor %}
     </tr>
 </table>
