@@ -1,0 +1,14 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>{{ user.username }}个人信息:</h2>
+<hr>
+<ul>
+    <li>姓名：{{ user.username }}</li>
+    <li>性别：{{ user.gender }}</li>
+    <li>生日：{{ user.birthday }}</li>
+    <li>城市：{{ user.city }}</li>
+</ul>
+{% endblock %}

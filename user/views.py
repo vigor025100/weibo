@@ -87,3 +87,11 @@ def info():
 def logout():
     session.clear()
     return redirect('/user/login')
+
+
+# 非登录用户信息详情页
+@user_bp.route('/other_info')
+def other_info():
+    uid = int(request.args.get('uid'))
+    user = User.query.filter_by(id=uid).one()
+    return render_template('other_info.html', user=user)

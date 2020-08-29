@@ -35,6 +35,7 @@ def home():
     else:
         start,end = (page-3),(page+3)
     pages = range(start,end+1)
+    session['page'] = page
 
     articles=Article.query.order_by(Article.updated.desc()).limit(per_page).offset(offset_page)
     return render_template('home.html', articles=articles,pages=pages,page=page)
@@ -71,6 +72,7 @@ def read():
 
     # 判断当前用户有没有给这条微博点赞
     uid = session.get('id') # 取当前登录用户的id
+    page = session.get('page') # 得到这条微博在home的第几页
     if uid : # 如果取到了uid
         if Thumb.query.filter_by(uid=uid, wid=id).count():
             is_liked=True
@@ -79,7 +81,7 @@ def read():
     else:
         is_liked=False
 
-    return render_template('read.html',article=article, comments=comments, is_liked=is_liked)
+    return render_template('read.html',article=article, comments=comments, is_liked=is_liked, page=page)
 
 @article_bp.route('/modif',methods=('POST','GET'))
 @login_required
@@ -194,3 +196,4 @@ def like():
 # 还想得到这个页面，那么肯定是我们想在这个页面的上信息有所变化，这样就是要再走一遍视图函数里的每一行代码，传到页面的信息也会更新
 # 页面的上信息的展示必须要有有这个也免得视图函数进行处理，传给页面才能进行展示
 # 下面一个就要解决当用户给某一条微博点赞以后，点赞要变成取消点赞
+

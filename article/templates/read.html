@@ -6,7 +6,7 @@
 
 <h2>微博详情</h2>
 <!--微博正文区-->
-<h4>{{ article.author.username }}:</h4>
+<h4><a href="/user/other_info?uid={{ article.uid }}">{{ article.author.username }}:</a></h4>
 <br>
 <span>{{ article.content | replace('\n', '<br>') | safe }}</span>
 <br>
@@ -22,7 +22,8 @@
 </a>
 <br>
 <!--微博改删功能区-->
-<a href="/article/home">回到微博首页</a>
+<!--进来第几页回去还是第几页-->
+<a href="/article/home?page={{ page }}">回到微博</a>
 {% if article.uid == session.get('id'): %}
 &nbsp;&nbsp;
 <button><a href="/article/modif?wid={{ article.id }}">修改本条微博</a></button>
