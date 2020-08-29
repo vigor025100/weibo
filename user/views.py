@@ -131,3 +131,19 @@ def follow():
         db.session.commit()
 
     return redirect(f'/user/other_info?wid={wid}&uid={fid}')
+
+@user_bp.route('/fans_list')
+def fans_list():
+    uid = session.get('id') # 查看粉丝，我是被关注的，是以fid
+    fans = Follow.query.filter_by(fid=uid).all()
+
+    fans_list_uid=[]
+    for fan in fans :
+        fans_list_uid.append(fan.uid)
+
+    fans_list=[]
+    for uid in fans_list_uid :
+        user = User.query.get(uid)
+        fans_list.append(user)
+
+    return render_template('fans_list.html',fans_list=fans_list)

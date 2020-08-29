@@ -199,3 +199,23 @@ def like():
 # 页面的上信息的展示必须要有有这个也免得视图函数进行处理，传给页面才能进行展示
 # 下面一个就要解决当用户给某一条微博点赞以后，点赞要变成取消点赞
 
+@article_bp.route('/follow_article')
+def follow_article():
+    uid = session.get('id')
+    f_fans = Follow.query.filter_by(uid=uid).all()
+
+    f_fans_fid=[]
+    for fan in f_fans :
+        f_fans_fid.append(fan.fid)
+
+    articles=[]
+    for fid in f_fans_fid:
+        article=Article.query.filter_by(uid=fid).all()
+        articles.append(article)
+
+    article_list=[]
+    for article in articles:
+        for art in article:
+            article_list.append(art)
+
+    return render_template('follow_article.html', article_list=article_list)

@@ -1,0 +1,16 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>{{ session.get('username') }}粉丝列表</h2>
+<a href="/user/info">返回信息详情</a>
+{% for user in fans_list %}
+<ul>
+    <li>姓名：{{ user.username }}</li>
+    <li>性别：{{ user.gender }}</li>
+    <li>生日：{{ user.birthday }}</li>
+</ul>
+<hr>
+{% endfor %}
+{% endblock %}

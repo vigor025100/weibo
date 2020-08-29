@@ -1,0 +1,17 @@
+<!--绑定父类模板-->
+{% extends "base.html" %}
+
+<!--填充内容-->
+{% block content %}
+<h2>我的关注</h2>
+<a href="/user/info">返回信息详情</a>
+<br>
+{% for article in article_list %}
+<strong>{{ article.author.username }} :</strong>
+<br>
+<span>{{ article.content }}</span>
+<br>
+<span>{{ article.updated }}</span>
+<hr>
+{% endfor %}
+{% endblock %}
