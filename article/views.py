@@ -10,7 +10,9 @@ from libs.orm import db
 
 from article.models import Article
 from article.models import Comment
+from article.models import Thumb
 from libs.utils import login_required
+from sqlalchemy.exc import IntegrityError
 
 article_bp = Blueprint('article',__name__,url_prefix='/article')
 article_bp.template_folder='./templates'
@@ -67,7 +69,17 @@ def read():
     # 根据 wid 取出相应的评论
     comments = Comment.query.filter_by(wid=id).order_by(Comment.created.desc())
 
-    return render_template('read.html',article=article, comments=comments)
+    # 判断当前用户有没有给这条微博点赞
+    uid = session.get('id') # 取当前登录用户的id
+    if uid : # 如果取到了uid
+        if Thumb.query.filter_by(uid=uid, wid=id).count():
+            is_liked=True
+        else:
+            is_liked=False
+    else:
+        is_liked=False
+
+    return render_template('read.html',article=article, comments=comments, is_liked=is_liked)
 
 @article_bp.route('/modif',methods=('POST','GET'))
 @login_required
@@ -135,3 +147,50 @@ def reply():
     db.session.commit()
 
     return redirect(f'/article/read?wid={wid}')
+
+@article_bp.route('/delete_comment')
+def delete_comment():
+    '''删除评论'''
+    # 在 read.html 页面已经做了判断，不是本人登录的情况下，微博的删除和修改按钮不展示
+    # 这个删除指令是从前端浏览上传过来，是一个请求，我们在服务器上去接收
+    id = int(request.args.get('id'))
+    wid = int(request.args.get('wid'))
+    comment = Comment.query.get(id)
+    # 修改数据
+    comment.content = '该条评论已删除'
+    # 提交数据
+    db.session.commit()
+
+    return redirect(f'/article/read?wid={wid}')
+
+
+@article_bp.route('/like')
+@login_required
+def like():
+    '''点赞'''
+    uid = session['id']  # 只要我登录了就能取到，session 括号里面填什么，那要看你在 login 环节推送的时候是怎么命名的了
+    wid = request.args.get('wid') # 这里我们就是需要这个数据，那么在写页面的时候就要注意要把这个数据传给服务器
+
+    thumb = Thumb(uid=uid, wid=wid)
+    try: # 没有错误的情况下会执行的语句
+        db.session.add(thumb)
+        Article.query.filter_by(id=wid).update({'n_thumb':Article.n_thumb + 1 }) # 点赞的数量+1
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        Article.query.filter_by(id=wid).update({'n_thumb': Article.n_thumb - 1})  # 点赞的数量-1
+        Thumb.query.filter_by(uid=uid, wid=wid).delete()
+        db.session.commit()
+
+    return redirect(f'/article/read?wid={wid}')
+    # 几乎每天都写这句，这是个啥有没有仔细思考过啊？
+# redirect()重定向函数，在这里重定向之前是read页面，重定向还是到read页面，为什么要这么做？
+# 重定向：在客户端提交请求以后，本来是访问的A页面，结果，后台给了B页面，因为B页面才是我在客服端提交请求后需要的信息
+# 在这里重定向以后还是read页面，只是有执行了一次read视图函数以后才得以展示的read页面
+# 为什么重定向是要再执行一次read视图函数，那么read视图函数，以及我们写这些视图函数又是为了干啥的
+# 在每个视图函数的最后，不是redirect()重定向函数，就是render_template()函数，后者是为了展示页面
+# 为什么要展示页面，页面是为了展示我们想要展示的信息，那我们想要展示的信息从哪里来，视图函数就是处理的过程，把我们想要的信息处理好，传给前端页面
+# 视图函数里面写的是一系列处理我们想要的信息的逻辑，虽然我们重定向的到的页面还是我们想要的页面，但是我们既然在客户端提交了请求以后
+# 还想得到这个页面，那么肯定是我们想在这个页面的上信息有所变化，这样就是要再走一遍视图函数里的每一行代码，传到页面的信息也会更新
+# 页面的上信息的展示必须要有有这个也免得视图函数进行处理，传给页面才能进行展示
+# 下面一个就要解决当用户给某一条微博点赞以后，点赞要变成取消点赞

@@ -6,13 +6,21 @@
 
 <h2>微博详情</h2>
 <!--微博正文区-->
-<h4>{{ article.author.username }} 说:</h4>
-<hr>
-<span>{{ article.content | replace('\n', '<br>') | safe }}</span>
-<hr>
-<span>发布时间：{{ article.updated }}</span>
+<h4>{{ article.author.username }}:</h4>
 <br>
-
+<span>{{ article.content | replace('\n', '<br>') | safe }}</span>
+<br>
+<span>发布时间：{{ article.updated }}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span>{{ article.n_thumb }}</span>
+<a href="/article/like?wid={{ article.id }}">
+    {% if is_liked %}
+    <strong>取消点赞</strong>
+    {% else %}
+    <strong>点赞</strong>
+    {% endif %}
+</a>
+<br>
 <!--微博改删功能区-->
 <a href="/article/home">回到微博首页</a>
 {% if article.uid == session.get('id'): %}
@@ -21,7 +29,7 @@
 &nbsp;&nbsp;
 <button><a href="/article/delete?wid={{ article.id }}">删除本条微博</a></button>
 {% endif %}
-
+<hr>
 <!--微博评论-->
 <form action="/article/push_comment" method="POST">
     <textarea name="content" rows="3" placeholder="发表评论"></textarea>
@@ -32,15 +40,18 @@
 <hr>
 
 <!--评论展示区-->
+<!--这个comments是包括了属于这一个wid的评论和回复评论都在里面了，因为我们是以wid去筛选的-->
 {% for c in comments %}
 <div style="background-color: #b3d7ff">
     {% if c.cid == 0 %}
-    {{ c.author.username }}说:
+    {{ c.author.username }} 说:
     {% else %}
-    {{ c.author.username }}对{{ c.upper.author.username }}说:
+    {{ c.author.username }} 对 {{ c.upper.author.username }} 说:
     {% endif %}
     <br>
     {{ c.content }}
+    <br>
+    <a href="/article/delete_comment?id={{ c.id }}&wid={{ article.id }}">删除</a>
     <br>
 <!--    评论回复的输入框-->
     <form action="/article/reply" method="POST">
@@ -48,15 +59,14 @@
         <input type="submit" value="回复">
         <input type="hidden" name="wid" value="{{ article.id }}">
         <input type="hidden" name="cid" value="{{ c.id }}">
+        <!--    删除评论-->
     </form>
 </div>
 <hr>
 {% endfor %}
 {% endblock %}
 
-
 <!--边栏内容-->
-
 {% block sidebar %}
 {% if not session.get('id'): %}
 <strong><a href="/user/login">登录</a></strong>

@@ -10,6 +10,7 @@ class Article(db.Model):
     content = db.Column(db.Text,nullable=False)
     created = db.Column(db.DateTime, nullable=False)
     updated = db.Column(db.DateTime, nullable=False)
+    n_thumb = db.Column(db.Integer, nullable=False, default=0)
 
     @property
     def author(self): # 我这定义的是啥 是个实例方法
@@ -58,3 +59,18 @@ class Comment(db.Model):
             return None
         else:
             return Comment.query.get(self.cid)
+
+
+# 点赞
+# 点赞是什么关系呀，是用户给另一个用户的微博，应该是说一个用户对另一个用户的一些东西进行了一些操作呢
+# 写了这么多天，可以总结一下，就是每当我们要进行一定的操作的时候，都会创建一个表格，创建表格当然是用于存放数据的，我么
+# 进行了一定操作的记录，是对操作的记录，之后就是要考虑表结构，表的结构，也是要根据你的业务需求来确定
+# 点赞是一个 一对多 的关系结构，一 是一个用户，多是多条微博
+# 对于点赞的行为，我们需要记录一些什么数据，谁给谁的微博点赞了，这里需要记录是谁的微博吗，其实不需要记录发这条微博的uid，
+# 我们课题通过微博的wid 找到这条微博是谁发的，因此我么创建点赞数据记录表只需要记录 uid 和 wid
+class Thumb(db.Model):
+    '''点赞表'''
+    __tablename__ = 'thumb'
+    uid = db.Column(db.Integer, primary_key=True)
+    wid = db.Column(db.Integer, primary_key=True)
+    # 联合主键唯一，当再次插入相同数据的时候会报错，我们可以使用这个实现点赞和取消点赞

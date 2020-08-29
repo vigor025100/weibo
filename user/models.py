@@ -40,3 +40,5 @@ class User(db.Model):
         db.session.add_all(users)
         db.session.commit()
         return users
+
+
