@@ -6,7 +6,7 @@
 
 <h2>微博详情</h2>
 <!--微博正文区-->
-<h4><a href="/user/other_info?uid={{ article.uid }}">{{ article.author.username }}:</a></h4>
+<h4><a href="/user/other_info?uid={{ article.uid }}&wid={{ article.id }}">{{ article.author.username }}:</a></h4>
 <br>
 <span>{{ article.content | replace('\n', '<br>') | safe }}</span>
 <br>

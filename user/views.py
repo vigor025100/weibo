@@ -93,5 +93,6 @@ def logout():
 @user_bp.route('/other_info')
 def other_info():
     uid = int(request.args.get('uid'))
+    wid = int(request.args.get('wid'))
     user = User.query.filter_by(id=uid).one()
-    return render_template('other_info.html', user=user)
+    return render_template('other_info.html', user=user,wid=wid)

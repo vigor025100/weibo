@@ -4,6 +4,9 @@
 <!--填充内容-->
 {% block content %}
 <h2>{{ user.username }}个人信息:</h2>
+<br>
+<button>粉丝列表</button>
+<button>关注列表</button>
 <hr>
 <ul>
     <li>姓名：{{ user.username }}</li>
@@ -11,4 +14,5 @@
     <li>生日：{{ user.birthday }}</li>
     <li>城市：{{ user.city }}</li>
 </ul>
+<button><a href="/article/read?wid={{ wid }}">返回</a></button>
 {% endblock %}
